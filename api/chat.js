@@ -11,26 +11,19 @@ export default async function handler(req, res) {
   }
 
   try {
-    const openaiRes = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
-      },
-      body: JSON.stringify({
-        model: 'gpt-3.5-turbo',
-        messages: [
-          {
-            role: 'system',
-            content: 'Du bist die innere Stimme des Nutzers. Sprich ruhig, achtsam, poetisch und tiefgründig.',
-          },
-          {
-            role: 'user',
-            content: message,
-          },
-        ],
-      }),
-    });
+   const openaiRes = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+  headers: {
+    "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    model: "mistralai/mistral-7b-instruct", // z. B. Open-Source-Modell
+    messages: [
+      { role: "system", content: "Du bist die innere Stimme..." },
+      { role: "user", content: message }
+    ]
+  })
+});
 
     const data = await openaiRes.json();
 
