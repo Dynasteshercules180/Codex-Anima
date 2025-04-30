@@ -1,8 +1,9 @@
-// Supabase-Initialisierung (ersetze mit deinen Daten!)
-const supabaseUrl = "https://qwcmpnguqsramlhbdcrx.supabaseClient.co";
+// Supabase-Initialisierung
+const supabaseUrl = "https://qwcmpnguqsramlhbdcrx.supabase.co";
 const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF3Y21wbmd1cXNyYW1saGJkY3J4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU5ODM4NzAsImV4cCI6MjA2MTU1OTg3MH0.DRKem19okKPpSbeNrx4qW494kLsVtHLtIfdGVya0xhE";
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
+// Motivationszitate
 const MOTIVATIONAL_QUOTES = [
   "Heute ist ein guter Tag, um neu zu beginnen.",
   "Deine Gedanken formen deine Welt.",
@@ -12,7 +13,6 @@ const MOTIVATIONAL_QUOTES = [
 ];
 
 let currentUser = null;
-let coinsToday = false;
 
 document.addEventListener("DOMContentLoaded", async () => {
   showMotivation();
@@ -55,7 +55,7 @@ async function showApp() {
 
 async function rewardCoins() {
   const today = new Date().toISOString().split("T")[0];
-  const { data, error } = await supabase
+  const { data, error } = await supabaseClient
     .from("coins")
     .select("*")
     .eq("user_id", currentUser.id)
@@ -77,20 +77,21 @@ async function saveDiary() {
 
 async function askSoul() {
   const question = document.getElementById("chatInput").value;
-  // Hier würdest du einen echten Chatbot-API-Call einfügen
-  document.getElementById("chatResponse").innerText = "Deine Seele sagt: " + question.split("").reverse().join("");
+  // Platzhalter für echten Chatbot – aktuell einfache Spiegelung
+  document.getElementById("chatResponse").innerText =
+    "Deine Seele sagt: " + question.split("").reverse().join("");
 }
 
 async function saveGoal() {
   const goal = document.getElementById("goalInput").value;
-  await supabase
+  await supabaseClient
     .from("goals")
     .upsert({ user_id: currentUser.id, goal: goal }, { onConflict: ['user_id'] });
   document.getElementById("goalDisplay").innerText = "🎯 Dein Ziel: " + goal;
 }
 
 async function loadGoal() {
-  const { data } = await supabase
+  const { data } = await supabaseClient
     .from("goals")
     .select("goal")
     .eq("user_id", currentUser.id)
@@ -103,7 +104,7 @@ async function loadGoal() {
 
 async function playGame() {
   const today = new Date().toISOString().split("T")[0];
-  const { data, error } = await supabase
+  const { data, error } = await supabaseClient
     .from("coins")
     .select("*")
     .eq("user_id", currentUser.id)
@@ -111,7 +112,7 @@ async function playGame() {
     .single();
 
   if (data && data.amount >= 5) {
-    await supabase
+    await supabaseClient
       .from("coins")
       .update({ amount: data.amount - 5 })
       .eq("user_id", currentUser.id)
