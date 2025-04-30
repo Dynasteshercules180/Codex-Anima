@@ -14,7 +14,6 @@
       <img src="codexanima-logo.png" alt="Codex Anima Logo" class="logo" />
     </div>
 
-    <!-- Titel -->
     <h1>Codex Anima – Echoes of your mind</h1>
 
     <!-- Login/Register -->
@@ -26,7 +25,7 @@
       <button onclick="signUp()">Registrieren</button>
     </div>
 
-    <!-- Haupt-App -->
+    <!-- Hauptbereich -->
     <div class="app-section" id="app-section" style="display:none;">
       <div class="logout">
         <button onclick="logout()">🚪 Logout</button>
@@ -61,15 +60,20 @@
         <p id="gameStatus"></p>
       </div>
 
-      <div class="diary-archive">
-        <h3>📚 Vergangene Einträge</h3>
-        <button onclick="loadDiaryEntries()">Aktualisieren</button>
-        <ul id="diaryList"></ul>
+      <div class="diary-book">
+        <h3>📖 Dein Tagebuch</h3>
+        <div id="bookContainer">
+          <div id="bookPage" class="book-page">Lade Einträge...</div>
+        </div>
+        <div class="book-controls">
+          <button onclick="prevEntry()">⬅️</button>
+          <span id="pageIndicator">1 / 1</span>
+          <button onclick="nextEntry()">➡️</button>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Supabase & Skript -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="script.js"></script>
 </body>
