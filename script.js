@@ -213,9 +213,29 @@ function renderCurrentPage() {
     weekday: "short", year: "numeric", month: "short", day: "numeric"
   });
 
-  const allContents = page.entries
-    .map(e => `<p class="entry-text">${e.content}</p>`)
-    .join("<hr>");
+  const allContents = page.entries.map(e => {
+    // Extrahiere Anhang-Link, falls vorhanden
+    const match = e.content.match(/<a href="([^"]+)"[^>]*>Anhang ansehen<\/a>/);
+    const attachmentUrl = match ? match[1] : null;
+
+    let iconHtml = "";
+    if (attachmentUrl) {
+      const isImage = /\.(jpe?g|png|gif)$/i.test(attachmentUrl);
+      const isPdf = /\.pdf$/i.test(attachmentUrl);
+
+      if (isImage) {
+        iconHtml = `<br><a href="${attachmentUrl}" target="_blank"><img src="${attachmentUrl}" class="attachment-thumb" alt="Bildanhang" /></a>`;
+      } else if (isPdf) {
+        iconHtml = `<br><a href="${attachmentUrl}" target="_blank" class="pdf-icon">📄 PDF öffnen</a>`;
+      } else {
+        iconHtml = `<br><a href="${attachmentUrl}" target="_blank">📎 Datei öffnen</a>`;
+      }
+    }
+
+    // Entferne ursprünglichen Linktext und füge stattdessen Icon ein
+    const contentWithoutLink = e.content.replace(/<a .*<\/a>/, '');
+    return `<p class="entry-text">${contentWithoutLink}${iconHtml}</p>`;
+  }).join("<hr>");
 
   bookPage.innerHTML = `<strong>${date}</strong><br><br>${allContents}`;
   indicator.innerText = `${currentPage + 1} / ${diaryEntries.length}`;
