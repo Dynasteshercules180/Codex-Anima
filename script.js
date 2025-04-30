@@ -1,7 +1,7 @@
 // Supabase-Initialisierung (ersetze mit deinen Daten!)
-const supabaseUrl = "https://qwcmpnguqsramlhbdcrx.supabase.co";
+const supabaseUrl = "https://qwcmpnguqsramlhbdcrx.supabaseClient.co";
 const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF3Y21wbmd1cXNyYW1saGJkY3J4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU5ODM4NzAsImV4cCI6MjA2MTU1OTg3MH0.DRKem19okKPpSbeNrx4qW494kLsVtHLtIfdGVya0xhE";
-const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+const supabaseClient = supabaseClient.createClient(supabaseUrl, supabaseKey);
 
 const MOTIVATIONAL_QUOTES = [
   "Heute ist ein guter Tag, um neu zu beginnen.",
@@ -16,7 +16,7 @@ let coinsToday = false;
 
 document.addEventListener("DOMContentLoaded", async () => {
   showMotivation();
-  const { data: { session } } = await supabase.auth.getSession();
+  const { data: { session } } = await supabaseClient.auth.getSession();
   if (session) {
     currentUser = session.user;
     showApp();
@@ -31,7 +31,7 @@ function showMotivation() {
 async function signIn() {
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
-  const { error, data } = await supabase.auth.signInWithPassword({ email, password });
+  const { error, data } = await supabaseClient.auth.signInWithPassword({ email, password });
   if (error) return alert(error.message);
   currentUser = data.user;
   showApp();
@@ -40,7 +40,7 @@ async function signIn() {
 async function signUp() {
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
-  const { error, data } = await supabase.auth.signUp({ email, password });
+  const { error, data } = await supabaseClient.auth.signUp({ email, password });
   if (error) return alert(error.message);
   alert("Registrierung erfolgreich! Bitte einloggen.");
 }
@@ -62,7 +62,7 @@ async function rewardCoins() {
     .eq("date", today);
 
   if (data.length === 0) {
-    await supabase.from("coins").insert({ user_id: currentUser.id, date: today, amount: 5 });
+    await supabaseClient.from("coins").insert({ user_id: currentUser.id, date: today, amount: 5 });
     document.getElementById("coins").innerText = "🪙 Du hast heute 5 Münzen erhalten!";
   } else {
     document.getElementById("coins").innerText = "🪙 Münzen heute bereits erhalten.";
@@ -71,7 +71,7 @@ async function rewardCoins() {
 
 async function saveDiary() {
   const text = document.getElementById("diaryEntry").value;
-  await supabase.from("diary").insert({ user_id: currentUser.id, content: text });
+  await supabaseClient.from("diary").insert({ user_id: currentUser.id, content: text });
   alert("Eintrag gespeichert!");
 }
 
