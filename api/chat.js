@@ -27,11 +27,15 @@ export default async function handler(req, res) {
       })
     });
 
-    const data = await openaiRes.json();
-    const reply = data.choices?.[0]?.message?.content || "Die Seele schweigt.";
+   const data = await response.json();
 
-    res.status(200).json({ reply });
+if (!data.choices || !data.choices[0]) {
+  console.error("OpenAI-Rohantwort:", data);
+  return res.status(500).json({ reply: "⚠️ Die Seele schweigt – OpenAI gab keine Antwort zurück." });
+}
 
+const reply = data.choices[0].message.content;
+res.status(200).json({ reply });
   } catch (err) {
     console.error("API-Fehler:", err);
     res.status(500).json({ error: "OpenAI-Fehler" });
