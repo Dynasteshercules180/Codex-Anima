@@ -1,0 +1,125 @@
+/* Allgemeine Stile */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #fdf6f0;
+  color: #333;
+  margin: 0;
+  padding: 20px;
+}
+
+.container {
+  max-width: 800px;
+  margin: auto;
+  padding: 20px;
+}
+
+/* Logo */
+.logo-container {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.logo {
+  max-width: 150px;
+  height: auto;
+}
+
+/* Titel */
+h1 {
+  text-align: center;
+  font-size: 2.2rem;
+  color: #7a4caa;
+  margin-bottom: 30px;
+}
+
+h2, h3 {
+  color: #5e3891;
+}
+
+/* Eingabefelder */
+input[type="email"],
+input[type="password"],
+input[type="text"],
+textarea {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box;
+  font-size: 1rem;
+  background-color: #fff;
+}
+
+textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* Buttons */
+button {
+  background-color: #7a4caa;
+  color: white;
+  padding: 10px 20px;
+  margin-bottom: 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #5e3891;
+}
+
+/* Sektionen */
+.diary, .chat, .goal, .game {
+  margin-top: 30px;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Motivationstext */
+.motivation-text {
+  font-style: italic;
+  font-size: 1.1rem;
+  color: #444;
+  background-color: #fff9f3;
+  padding: 12px;
+  border-left: 4px solid #ffb347;
+  border-radius: 6px;
+  margin-bottom: 15px;
+}
+
+/* Münzenanzeige */
+.coins-text {
+  font-weight: bold;
+  color: #ff9800;
+  margin-bottom: 20px;
+}
+
+/* Chat-Antwort */
+.chat-response {
+  margin-top: 10px;
+  background-color: #f2ecf9;
+  border-radius: 6px;
+  padding: 10px;
+  font-style: italic;
+  color: #555;
+}
+
+/* Zielanzeige */
+#goalDisplay {
+  margin-top: 10px;
+  font-weight: bold;
+  color: #00695c;
+}
+
+/* Spielstatus */
+#gameStatus {
+  margin-top: 10px;
+  color: #455a64;
+}

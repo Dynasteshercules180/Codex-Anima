@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Codex Anima - Echoes of your mind</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/png" href="codexanima-logo.png" />
+</head>
+<body>
+  <div class="container">
+    <!-- Logo -->
+    <div class="logo-container">
+      <img src="codexanima-logo.png" alt="Codex Anima Logo" class="logo" />
+    </div>
+
+    <!-- Titel -->
+    <h1>Codex Anima – Echoes of your mind</h1>
+
+    <!-- Login/Register -->
+    <div class="login-section" id="auth-section">
+      <h2>Anmelden</h2>
+      <input type="email" id="email" placeholder="Email" />
+      <input type="password" id="password" placeholder="Passwort" />
+      <button onclick="signIn()">Login</button>
+      <button onclick="signUp()">Registrieren</button>
+    </div>
+
+    <!-- Haupt-App -->
+    <div class="app-section" id="app-section" style="display:none;">
+      <!-- Tägliche Motivation -->
+      <p id="motivation" class="motivation-text"></p>
+
+      <!-- Münzen-Anzeige -->
+      <p id="coins" class="coins-text"></p>
+
+      <!-- Tagebucheintrag -->
+      <div class="diary">
+        <h3>📔 Tagebucheintrag</h3>
+        <textarea id="diaryEntry" placeholder="Schreib hier deinen Tag nieder..."></textarea>
+        <button onclick="saveDiary()">Eintrag speichern</button>
+      </div>
+
+      <!-- Chatbot -->
+      <div class="chat">
+        <h3>🪞 Chat mit deiner Seele</h3>
+        <textarea id="chatInput" placeholder="Frag deine Seele etwas..."></textarea>
+        <button onclick="askSoul()">Senden</button>
+        <div id="chatResponse" class="chat-response"></div>
+      </div>
+
+      <!-- Zielverfolgung -->
+      <div class="goal">
+        <h3>🎯 Dein Ziel</h3>
+        <input type="text" id="goalInput" placeholder="Dein aktuelles Ziel..." />
+        <button onclick="saveGoal()">Speichern</button>
+        <p id="goalDisplay"></p>
+      </div>
+
+      <!-- Spiel -->
+      <div class="game">
+        <h3>🎮 Mini-Spiel</h3>
+        <button onclick="playGame()">Spiel starten (5 Münzen)</button>
+        <p id="gameStatus"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Supabase & Skript -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
