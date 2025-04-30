@@ -1,5 +1,4 @@
 export default async function handler(req, res) {
-  // Nur POST-Anfragen erlauben
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Nur POST erlaubt' });
   }
@@ -11,45 +10,36 @@ export default async function handler(req, res) {
   }
 
   try {
-    const openRouterRes = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method: 'POST', // ✅ ganz wichtig
+    const response = await fetch('https://api-inference.huggingface.co/models/HuggingFaceH4/zephyr-7b-beta', {
+      method: 'POST',
       headers: {
+        Authorization: `Bearer ${process.env.HUGGINGFACE_TOKEN}`,
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
       },
       body: JSON.stringify({
-        model: 'openchat/openchat-7b', // ✅ kostenloses Modell
-        messages: [
-          {
-            role: 'system',
-            content: 'Du bist die ruhige, poetische, reflektierende Seele des Nutzers. Antworte achtsam und tiefgründig.',
-          },
-          {
-            role: 'user',
-            content: message,
-          },
-        ],
+        inputs: `User: ${message}\nAssistant:`,
+        parameters: {
+          max_new_tokens: 200,
+          temperature: 0.7,
+        }
       }),
     });
 
-    const data = await openRouterRes.json();
+    const data = await response.json();
 
-    // Debug-Ausgabe in den Logs
-    console.log("OpenRouter Antwort:", data);
-
-    if (!data || !data.choices || !data.choices[0]?.message?.content) {
-      return res.status(500).json({
-        reply: '⚠️ Die Seele schweigt – keine Antwort vom Modell erhalten.',
-      });
+    if (!data || !Array.isArray(data) || !data[0]?.generated_text) {
+      console.error("Antwortproblem:", data);
+      return res.status(500).json({ reply: '⚠️ Die Seele schweigt – keine Antwort vom Modell.' });
     }
 
-    const reply = data.choices[0].message.content.trim();
+    // Extrahiere nur die KI-Antwort (nach dem Prompt)
+    const full = data[0].generated_text;
+    const reply = full.split("Assistant:")[1]?.trim() || full;
+
     return res.status(200).json({ reply });
 
   } catch (error) {
     console.error('API-Fehler:', error);
-    return res.status(500).json({
-      error: 'Interner Serverfehler bei der KI-Abfrage.',
-    });
+    return res.status(500).json({ error: 'Fehler beim Kontakt zur Seele (Hugging Face).' });
   }
 }
