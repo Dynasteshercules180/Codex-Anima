@@ -1,5 +1,5 @@
 const supabaseUrl = "https://qwcmpnguqsramlhbdcrx.supabase.co";
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF3Y21wbmd1cXNyYW1saGJkY3J4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU5ODM4NzAsImV4cCI6MjA2MTU1OTg3MH0.DRKem19okKPpSbeNrx4qW494kLsVtHLtIfdGVya0xhE"; // Dein echter Key hier!
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF3Y21wbmd1cXNyYW1saGJkY3J4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU5ODM4NzAsImV4cCI6MjA2MTU1OTg3MH0.DRKem19okKPpSbeNrx4qW494kLsVtHLtIfdGVya0xhE"; // ← dein echter Key
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
 const MOTIVATIONAL_QUOTES = [
@@ -50,21 +50,6 @@ async function logout() {
   currentUser = null;
   document.getElementById("auth-section").style.display = "block";
   document.getElementById("app-section").style.display = "none";
-}
-
-async function testUpload() {
-  const testFile = new File(["Hello world!"], "test.txt", { type: "text/plain" });
-  const { error } = await supabaseClient
-    .storage
-    .from("diary-uploads")
-    .upload(`${currentUser.id}/test-${Date.now()}.txt`, testFile);
-
-  if (error) {
-    console.error("Test-Upload fehlgeschlagen:", error);
-    alert("❌ Test-Upload fehlgeschlagen: " + error.message);
-  } else {
-    alert("✅ Test-Datei erfolgreich hochgeladen!");
-  }
 }
 
 async function showApp() {
@@ -172,28 +157,6 @@ async function loadGoal() {
   }
 }
 
-async function playGame() {
-  const today = new Date().toISOString().split("T")[0];
-  const { data } = await supabaseClient
-    .from("coins")
-    .select("*")
-    .eq("user_id", currentUser.id)
-    .eq("date", today)
-    .maybeSingle();
-
-  if (data && data.amount >= 5) {
-    await supabaseClient
-      .from("coins")
-      .update({ amount: data.amount - 5 })
-      .eq("user_id", currentUser.id)
-      .eq("date", today);
-    document.getElementById("gameStatus").innerText = "🎮 Spiel gestartet!";
-    rewardCoins();
-  } else {
-    document.getElementById("gameStatus").innerText = "❌ Nicht genug Münzen!";
-  }
-}
-
 async function loadDiaryEntries() {
   const { data } = await supabaseClient
     .from("diary")
@@ -252,3 +215,128 @@ bookContainer.addEventListener("touchend", e => {
   if (diff > 50) nextEntry();
   else if (diff < -50) prevEntry();
 });
+async function startRandomGame() {
+  const today = new Date().toISOString().split("T")[0];
+  const gameStatus = document.getElementById("gameStatus");
+
+  // 2 Münzen abziehen
+  const { data, error } = await supabaseClient
+    .from("coins")
+    .select("*")
+    .eq("user_id", currentUser.id)
+    .eq("date", today)
+    .maybeSingle();
+
+  if (!data || data.amount < 2) {
+    gameStatus.innerText = "❌ Nicht genug Münzen!";
+    return;
+  }
+
+  await supabaseClient
+    .from("coins")
+    .update({ amount: data.amount - 2 })
+    .eq("user_id", currentUser.id)
+    .eq("date", today);
+
+  gameStatus.innerText = "";
+  const games = [reactionGame, clickerGame, memoryGame];
+  const randomGame = games[Math.floor(Math.random() * games.length)];
+  randomGame();
+}
+
+function reactionGame() {
+  const area = document.getElementById("gameArea");
+  area.innerHTML = `<button id="reactionBtn" disabled style="width:100%;">Warte auf Grün...</button>`;
+  const btn = document.getElementById("reactionBtn");
+
+  const wait = Math.floor(Math.random() * 3000) + 2000;
+
+  setTimeout(() => {
+    btn.disabled = false;
+    btn.innerText = "JETZT!";
+    btn.style.backgroundColor = "green";
+    const start = Date.now();
+
+    btn.onclick = () => {
+      const time = Date.now() - start;
+      btn.disabled = true;
+      btn.innerText = `⏱️ ${time} ms`;
+      document.getElementById("gameStatus").innerText =
+        time < 300 ? "⚡ Super schnell!" : "😊 Gut reagiert!";
+      if (time < 400) rewardCoin();
+    };
+  }, wait);
+}
+
+function clickerGame() {
+  const area = document.getElementById("gameArea");
+  area.innerHTML = `<button id="clickBtn">Klick mich schnell!</button><p id="clickCount">0 / 5</p>`;
+  const btn = document.getElementById("clickBtn");
+  let count = 0;
+  const maxClicks = 5;
+  const duration = 3000;
+
+  const timer = setTimeout(() => {
+    btn.disabled = true;
+    document.getElementById("gameStatus").innerText =
+      count >= maxClicks ? "🎉 Geschafft!" : "⏰ Zu langsam!";
+  }, duration);
+
+  btn.onclick = () => {
+    count++;
+    document.getElementById("clickCount").innerText = `${count} / ${maxClicks}`;
+    if (count >= maxClicks) {
+      clearTimeout(timer);
+      btn.disabled = true;
+      document.getElementById("gameStatus").innerText = "🎉 Geschafft!";
+      rewardCoin();
+    }
+  };
+}
+
+function memoryGame() {
+  const area = document.getElementById("gameArea");
+  const number = Math.floor(Math.random() * 900 + 100); // 3-stellig
+  area.innerHTML = `<p>Merke dir diese Zahl:</p><h2>${number}</h2>`;
+
+  setTimeout(() => {
+    area.innerHTML = `
+      <p>Was war die Zahl?</p>
+      <input id="guessInput" type="number" />
+      <button onclick="checkMemory(${number})">Antwort</button>
+    `;
+  }, 3000);
+}
+
+function checkMemory(correctNumber) {
+  const guess = document.getElementById("guessInput").value;
+  const result = guess == correctNumber
+    ? "🎯 Richtig!" 
+    : `❌ Falsch! Es war ${correctNumber}`;
+
+  document.getElementById("gameStatus").innerText = result;
+  document.getElementById("gameArea").innerHTML = "";
+  if (guess == correctNumber) rewardCoin();
+}
+
+async function rewardCoin() {
+  const today = new Date().toISOString().split("T")[0];
+
+  const { data } = await supabaseClient
+    .from("coins")
+    .select("*")
+    .eq("user_id", currentUser.id)
+    .eq("date", today)
+    .maybeSingle();
+
+  if (data) {
+    const newAmount = data.amount + 1;
+    await supabaseClient
+      .from("coins")
+      .update({ amount: newAmount })
+      .eq("user_id", currentUser.id)
+      .eq("date", today);
+
+    document.getElementById("coins").innerText = `💰 Verfügbare Münzen heute: ${newAmount}`;
+  }
+}
