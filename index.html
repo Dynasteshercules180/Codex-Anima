@@ -6,69 +6,6 @@
   <title>Codex Anima - Echoes of your mind</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="icon" type="image/png" href="codexanima-logo.png" />
-  <style>
-    body {
-      font-family: "Segoe UI", "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
-      background-color: #fdf6f0;
-      color: #333;
-      padding: 20px;
-    }
-    .container {
-      max-width: 800px;
-      margin: auto;
-    }
-    .logo-container {
-      text-align: center;
-      margin-bottom: 10px;
-    }
-    .logo {
-      max-width: 150px;
-      height: auto;
-    }
-    h1 {
-      text-align: center;
-      color: #7a4caa;
-    }
-    textarea, input {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 10px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-    }
-    button {
-      padding: 10px 20px;
-      background-color: #7a4caa;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #5e3891;
-    }
-    .motivation-text, .coins-text {
-      font-style: italic;
-      margin: 15px 0;
-    }
-    .chat-response {
-      background-color: #f2ecf9;
-      padding: 10px;
-      border-radius: 5px;
-      margin-top: 10px;
-    }
-    .diary, .chat, .goal, .game {
-      margin-top: 30px;
-      background: #fff;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
-    }
-    .logout {
-      text-align: right;
-      margin-bottom: 10px;
-    }
-  </style>
 </head>
 <body>
   <div class="container">
@@ -123,9 +60,16 @@
         <button onclick="playGame()">Spiel starten (5 Münzen)</button>
         <p id="gameStatus"></p>
       </div>
+
+      <div class="diary-archive">
+        <h3>📚 Vergangene Einträge</h3>
+        <button onclick="loadDiaryEntries()">Aktualisieren</button>
+        <ul id="diaryList"></ul>
+      </div>
     </div>
   </div>
 
+  <!-- Supabase & Skript -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="script.js"></script>
 </body>
