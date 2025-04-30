@@ -149,6 +149,7 @@ async function askSoul() {
   }
 }
 
+
 async function saveGoal() {
   const goal = document.getElementById("goalInput").value;
   if (!goal.trim()) return alert("Bitte gib ein Ziel ein.");
