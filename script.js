@@ -134,39 +134,20 @@ async function askSoul() {
   document.getElementById("chatResponse").innerText = "⏳ Die Seele denkt nach...";
 
   try {
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    const response = await fetch("/api/chat", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer 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" // ← hier ersetzen
-      },
-      body: JSON.stringify({
-        model: "gpt-3.5-turbo",
-        messages: [
-          {
-            role: "system",
-            content: "Du bist eine achtsame, reflektierende Seele, die dem Nutzer hilft, sich selbst zu verstehen. Antworte poetisch, tiefgründig und empathisch."
-          },
-          {
-            role: "user",
-            content: question
-          }
-        ]
-      })
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: question })
     });
 
     const data = await response.json();
-
-    const answer = data.choices?.[0]?.message?.content || "Ich spüre deine Frage, aber kann sie gerade nicht beantworten.";
-    document.getElementById("chatResponse").innerText = "🧘 Deine Seele sagt:\n" + answer;
+    document.getElementById("chatResponse").innerText = "🧘 Deine Seele sagt:\n" + data.reply;
     document.getElementById("chatInput").value = "";
-
   } catch (err) {
-    console.error("KI-Fehler:", err);
-    document.getElementById("chatResponse").innerText = "⚠️ Die Seele schweigt... (Fehler beim Verbinden mit der KI)";
+    console.error("Fehler beim Aufruf der Seele:", err);
+    document.getElementById("chatResponse").innerText = "⚠️ Die Seele schweigt... (Serverfehler)";
   }
 }
-
 
 async function saveGoal() {
   const goal = document.getElementById("goalInput").value;
