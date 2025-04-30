@@ -12,7 +12,6 @@
     <div class="logo-container">
       <img src="codexanima-logo.png" alt="Codex Anima Logo" class="logo" />
     </div>
-
     <h1>Codex Anima – Echoes of your mind</h1>
 
     <div class="login-section" id="auth-section">
@@ -53,8 +52,10 @@
       </div>
 
       <div class="game">
-        <h3>💰 Mini-Spiel</h3>
-        <button onclick="playGame()">Spiel starten (5 Münzen)</button>
+        <h3>🎮 Zufälliges Mini-Spiel</h3>
+        <p>💰 Spiel kostet 2 Münzen. Zeige dein Können!</p>
+        <button onclick="startRandomGame()">Spiel starten</button>
+        <div id="gameArea" style="margin-top: 15px;"></div>
         <p id="gameStatus"></p>
       </div>
 
