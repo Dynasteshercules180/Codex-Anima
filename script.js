@@ -185,7 +185,9 @@ async function loadDiaryEntries() {
 }
 
 function renderCurrentPage() {
-  const bookPage = document.getElementById("bookPage");
+  const dayEntries = diaryEntries.filter(e => new Date(e.created_at).toDateString() === new Date(entry.created_at).toDateString());
+  const allContents = dayEntries.map(e => `<p class="entry-text">${e.content}</p>`).join("<hr>");
+  bookPage.innerHTML = `<strong>${date}</strong><br><br>${allContents}`;
   const indicator = document.getElementById("pageIndicator");
 
   if (diaryEntries.length === 0) {
