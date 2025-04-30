@@ -52,6 +52,21 @@ async function logout() {
   document.getElementById("app-section").style.display = "none";
 }
 
+async function testUpload() {
+  const testFile = new File(["Hello world!"], "test.txt", { type: "text/plain" });
+  const { error } = await supabaseClient
+    .storage
+    .from("diary-uploads")
+    .upload(`${currentUser.id}/test-${Date.now()}.txt`, testFile);
+
+  if (error) {
+    console.error("Test-Upload fehlgeschlagen:", error);
+    alert("❌ Test-Upload fehlgeschlagen: " + error.message);
+  } else {
+    alert("✅ Test-Datei erfolgreich hochgeladen!");
+  }
+}
+
 async function showApp() {
   document.getElementById("auth-section").style.display = "none";
   document.getElementById("app-section").style.display = "block";
