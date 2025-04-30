@@ -179,10 +179,24 @@ async function loadDiaryEntries() {
     .eq("user_id", currentUser.id)
     .order("created_at", { ascending: true });
 
-  diaryEntries = data || [];
+  // Gruppieren nach Datum (z. B. 2025-04-30)
+  const grouped = {};
+
+  (data || []).forEach(entry => {
+    const dateKey = new Date(entry.created_at).toISOString().split("T")[0];
+    if (!grouped[dateKey]) grouped[dateKey] = [];
+    grouped[dateKey].push(entry);
+  });
+
+  diaryEntries = Object.entries(grouped).map(([date, entries]) => ({
+    date,
+    entries
+  }));
+
   currentPage = diaryEntries.length > 0 ? diaryEntries.length - 1 : 0;
   renderCurrentPage();
 }
+
 
 function renderCurrentPage() {
   const bookPage = document.getElementById("bookPage");
@@ -194,16 +208,12 @@ function renderCurrentPage() {
     return;
   }
 
-  const entry = diaryEntries[currentPage];
-  const date = new Date(entry.created_at).toLocaleDateString("de-DE", {
+  const page = diaryEntries[currentPage];
+  const date = new Date(page.date).toLocaleDateString("de-DE", {
     weekday: "short", year: "numeric", month: "short", day: "numeric"
   });
 
-  const sameDayEntries = diaryEntries.filter(e =>
-    new Date(e.created_at).toDateString() === new Date(entry.created_at).toDateString()
-  );
-
-  const allContents = sameDayEntries
+  const allContents = page.entries
     .map(e => `<p class="entry-text">${e.content}</p>`)
     .join("<hr>");
 
