@@ -1,9 +1,7 @@
-// Supabase-Initialisierung
 const supabaseUrl = "https://qwcmpnguqsramlhbdcrx.supabase.co";
 const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF3Y21wbmd1cXNyYW1saGJkY3J4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU5ODM4NzAsImV4cCI6MjA2MTU1OTg3MH0.DRKem19okKPpSbeNrx4qW494kLsVtHLtIfdGVya0xhE";
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-// Motivationszitate
 const MOTIVATIONAL_QUOTES = [
   "Heute ist ein guter Tag, um neu zu beginnen.",
   "Deine Gedanken formen deine Welt.",
@@ -61,7 +59,7 @@ async function showApp() {
 
 async function rewardCoins() {
   const today = new Date().toISOString().split("T")[0];
-  const { data, error } = await supabaseClient
+  const { data } = await supabaseClient
     .from("coins")
     .select("*")
     .eq("user_id", currentUser.id)
@@ -140,5 +138,35 @@ async function playGame() {
     rewardCoins();
   } else {
     document.getElementById("gameStatus").innerText = "❌ Nicht genug Münzen!";
+  }
+}
+
+async function loadDiaryEntries() {
+  const { data, error } = await supabaseClient
+    .from("diary")
+    .select("content, created_at")
+    .eq("user_id", currentUser.id)
+    .order("created_at", { ascending: false });
+
+  const diaryList = document.getElementById("diaryList");
+  diaryList.innerHTML = "";
+
+  if (error) {
+    diaryList.innerHTML = "<li>❌ Fehler beim Laden.</li>";
+    return;
+  }
+
+  if (data.length === 0) {
+    diaryList.innerHTML = "<li>📭 Noch keine Einträge vorhanden.</li>";
+    return;
+  }
+
+  for (const entry of data) {
+    const li = document.createElement("li");
+    const date = new Date(entry.created_at).toLocaleDateString("de-DE", {
+      weekday: "short", year: "numeric", month: "short", day: "numeric"
+    });
+    li.innerHTML = `<strong>${date}</strong><br>${entry.content}`;
+    diaryList.appendChild(li);
   }
 }
