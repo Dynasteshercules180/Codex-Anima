@@ -355,3 +355,77 @@ async function rewardCoin() {
     document.getElementById("coins").innerText = `💰 Verfügbare Münzen heute: ${newAmount}`;
   }
 }
+async function saveGoal() {
+  const goal = document.getElementById("goalInput").value;
+  const target = parseInt(document.getElementById("goalTarget").value || "1");
+
+  await supabaseClient.from("goals").upsert({
+    user_id: currentUser.id,
+    goal,
+    target,
+    progress: 0,
+    achieved: false
+  }, { onConflict: ['user_id'] });
+
+  loadGoal();
+}
+
+async function trackGoal() {
+  const { data } = await supabaseClient
+    .from("goals")
+    .select("*")
+    .eq("user_id", currentUser.id)
+    .single();
+
+  if (data && !data.achieved) {
+    const newProgress = data.progress + 1;
+    const achieved = newProgress >= data.target;
+
+    await supabaseClient.from("goals").update({
+      progress: newProgress,
+      achieved
+    }).eq("user_id", currentUser.id);
+
+    if (achieved) {
+      await rewardCoin(5); // 5 Bonusmünzen
+      alert("🎉 Ziel erreicht! Du bekommst 5 Münzen!");
+    }
+
+    loadGoal();
+  }
+}
+
+async function loadGoal() {
+  const { data } = await supabaseClient
+    .from("goals")
+    .select("*")
+    .eq("user_id", currentUser.id)
+    .single();
+
+  if (data) {
+    const status = data.achieved ? "✅ Abgeschlossen!" : `📈 Fortschritt: ${data.progress}/${data.target}`;
+    document.getElementById("goalDisplay").innerText = `🎯 Ziel: ${data.goal}\n${status}`;
+  }
+}
+
+async function rewardCoin(amount = 1) {
+  const today = new Date().toISOString().split("T")[0];
+  const { data } = await supabaseClient
+    .from("coins")
+    .select("*")
+    .eq("user_id", currentUser.id)
+    .eq("date", today)
+    .maybeSingle();
+
+  if (data) {
+    const newAmount = data.amount + amount;
+    await supabaseClient
+      .from("coins")
+      .update({ amount: newAmount })
+      .eq("user_id", currentUser.id)
+      .eq("date", today);
+
+    document.getElementById("coins").innerText = `💰 Verfügbare Münzen heute: ${newAmount}`;
+  }
+}
+
