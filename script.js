@@ -1,5 +1,5 @@
 const supabaseUrl = "https://qwcmpnguqsramlhbdcrx.supabase.co";
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF3Y21wbmd1cXNyYW1saGJkY3J4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU5ODM4NzAsImV4cCI6MjA2MTU1OTg3MH0.DRKem19okKPpSbeNrx4qW494kLsVtHLtIfdGVya0xhE";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF3Y21wbmd1cXNyYW1saGJkY3J4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU5ODM4NzAsImV4cCI6MjA2MTU1OTg3MH0.DRKem19okKPpSbeNrx4qW494kLsVtHLtIfdGVya0xhE"; // Dein echter Key hier!
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
 const MOTIVATIONAL_QUOTES = [
@@ -83,13 +83,47 @@ async function rewardCoins() {
 
 async function saveDiary() {
   const text = document.getElementById("diaryEntry").value;
-  if (!text.trim()) return alert("Bitte schreibe etwas.");
+  const fileInput = document.getElementById("diaryFile");
+  let fileUrl = null;
+
+  if (!text.trim() && fileInput.files.length === 0) {
+    alert("Bitte schreibe etwas oder lade eine Datei hoch.");
+    return;
+  }
+
+  if (fileInput.files.length > 0) {
+    const file = fileInput.files[0];
+    const filePath = `${currentUser.id}/${Date.now()}_${file.name}`;
+
+    const { error: uploadError } = await supabaseClient
+      .storage
+      .from("diary-uploads")
+      .upload(filePath, file);
+
+    if (uploadError) {
+      console.error("Upload-Fehler:", uploadError);
+      alert("❌ Datei konnte nicht hochgeladen werden.");
+      return;
+    }
+
+    const { data: publicData } = supabaseClient
+      .storage
+      .from("diary-uploads")
+      .getPublicUrl(filePath);
+
+    fileUrl = publicData.publicUrl;
+  }
+
+  const fullContent = fileUrl ? `${text}\n\n📎 <a href="${fileUrl}" target="_blank">Anhang ansehen</a>` : text;
+
   await supabaseClient.from("diary").insert({
     user_id: currentUser.id,
-    content: text
+    content: fullContent
   });
+
   alert("Eintrag gespeichert!");
   document.getElementById("diaryEntry").value = "";
+  document.getElementById("diaryFile").value = "";
   await loadDiaryEntries();
 }
 
@@ -146,15 +180,13 @@ async function playGame() {
 }
 
 async function loadDiaryEntries() {
-  const { data, error } = await supabaseClient
+  const { data } = await supabaseClient
     .from("diary")
     .select("content, created_at")
     .eq("user_id", currentUser.id)
     .order("created_at", { ascending: true });
 
-  if (error) return;
-
-  diaryEntries = data;
+  diaryEntries = data || [];
   currentPage = diaryEntries.length > 0 ? diaryEntries.length - 1 : 0;
   renderCurrentPage();
 }
