@@ -11,6 +11,8 @@ const MOTIVATIONAL_QUOTES = [
 ];
 
 let currentUser = null;
+let diaryEntries = [];
+let currentPage = 0;
 
 document.addEventListener("DOMContentLoaded", async () => {
   showMotivation();
@@ -55,6 +57,7 @@ async function showApp() {
   document.getElementById("app-section").style.display = "block";
   await rewardCoins();
   await loadGoal();
+  await loadDiaryEntries();
 }
 
 async function rewardCoins() {
@@ -87,6 +90,7 @@ async function saveDiary() {
   });
   alert("Eintrag gespeichert!");
   document.getElementById("diaryEntry").value = "";
+  await loadDiaryEntries();
 }
 
 async function askSoul() {
@@ -146,27 +150,58 @@ async function loadDiaryEntries() {
     .from("diary")
     .select("content, created_at")
     .eq("user_id", currentUser.id)
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: true });
 
-  const diaryList = document.getElementById("diaryList");
-  diaryList.innerHTML = "";
+  if (error) return;
 
-  if (error) {
-    diaryList.innerHTML = "<li>❌ Fehler beim Laden.</li>";
+  diaryEntries = data;
+  currentPage = diaryEntries.length > 0 ? diaryEntries.length - 1 : 0;
+  renderCurrentPage();
+}
+
+function renderCurrentPage() {
+  const bookPage = document.getElementById("bookPage");
+  const indicator = document.getElementById("pageIndicator");
+
+  if (diaryEntries.length === 0) {
+    bookPage.innerHTML = "📭 Noch keine Einträge vorhanden.";
+    indicator.innerText = "0 / 0";
     return;
   }
 
-  if (data.length === 0) {
-    diaryList.innerHTML = "<li>📭 Noch keine Einträge vorhanden.</li>";
-    return;
-  }
+  const entry = diaryEntries[currentPage];
+  const date = new Date(entry.created_at).toLocaleDateString("de-DE", {
+    weekday: "short", year: "numeric", month: "short", day: "numeric"
+  });
 
-  for (const entry of data) {
-    const li = document.createElement("li");
-    const date = new Date(entry.created_at).toLocaleDateString("de-DE", {
-      weekday: "short", year: "numeric", month: "short", day: "numeric"
-    });
-    li.innerHTML = `<strong>${date}</strong><br>${entry.content}`;
-    diaryList.appendChild(li);
+  bookPage.innerHTML = `<strong>${date}</strong><br><br>${entry.content}`;
+  indicator.innerText = `${currentPage + 1} / ${diaryEntries.length}`;
+}
+
+function nextEntry() {
+  if (currentPage < diaryEntries.length - 1) {
+    currentPage++;
+    renderCurrentPage();
   }
 }
+
+function prevEntry() {
+  if (currentPage > 0) {
+    currentPage--;
+    renderCurrentPage();
+  }
+}
+
+const bookContainer = document.getElementById("bookContainer");
+let startX = 0;
+
+bookContainer.addEventListener("touchstart", e => {
+  startX = e.touches[0].clientX;
+});
+
+bookContainer.addEventListener("touchend", e => {
+  const endX = e.changedTouches[0].clientX;
+  const diff = startX - endX;
+  if (diff > 50) nextEntry();
+  else if (diff < -50) prevEntry();
+});
