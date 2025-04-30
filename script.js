@@ -45,6 +45,13 @@ async function signUp() {
   alert("Registrierung erfolgreich! Bitte einloggen.");
 }
 
+async function logout() {
+  await supabaseClient.auth.signOut();
+  currentUser = null;
+  document.getElementById("auth-section").style.display = "block";
+  document.getElementById("app-section").style.display = "none";
+}
+
 async function showApp() {
   document.getElementById("auth-section").style.display = "none";
   document.getElementById("app-section").style.display = "block";
@@ -59,35 +66,58 @@ async function rewardCoins() {
     .from("coins")
     .select("*")
     .eq("user_id", currentUser.id)
-    .eq("date", today);
+    .eq("date", today)
+    .maybeSingle();
 
-  if (data.length === 0) {
-    await supabaseClient.from("coins").insert({ user_id: currentUser.id, date: today, amount: 5 });
+  if (error && error.code !== "PGRST116") {
+    console.error("Fehler beim Abrufen der Münzen:", error);
+    document.getElementById("coins").innerText = "⚠️ Fehler bei der Münz-Abfrage.";
+    return;
+  }
+
+  if (!data) {
+    // Noch keine Eintragung heute → 5 Münzen geben
+    const { error: insertError } = await supabaseClient
+      .from("coins")
+      .insert({ user_id: currentUser.id, date: today, amount: 5 });
+
+    if (insertError) {
+      console.error("Fehler beim Einfügen der Münzen:", insertError);
+      document.getElementById("coins").innerText = "⚠️ Fehler beim Münzeintrag.";
+      return;
+    }
+
     document.getElementById("coins").innerText = "🪙 Du hast heute 5 Münzen erhalten!";
   } else {
-    document.getElementById("coins").innerText = "🪙 Münzen heute bereits erhalten.";
+    document.getElementById("coins").innerText = `🪙 Verfügbare Münzen heute: ${data.amount}`;
   }
 }
 
 async function saveDiary() {
   const text = document.getElementById("diaryEntry").value;
+  if (!text.trim()) return alert("Bitte schreibe etwas in dein Tagebuch.");
   await supabaseClient.from("diary").insert({ user_id: currentUser.id, content: text });
   alert("Eintrag gespeichert!");
+  document.getElementById("diaryEntry").value = "";
 }
 
 async function askSoul() {
   const question = document.getElementById("chatInput").value;
+  if (!question.trim()) return;
   // Platzhalter für echten Chatbot – aktuell einfache Spiegelung
   document.getElementById("chatResponse").innerText =
     "Deine Seele sagt: " + question.split("").reverse().join("");
+  document.getElementById("chatInput").value = "";
 }
 
 async function saveGoal() {
   const goal = document.getElementById("goalInput").value;
+  if (!goal.trim()) return alert("Bitte gib ein Ziel ein.");
   await supabaseClient
     .from("goals")
     .upsert({ user_id: currentUser.id, goal: goal }, { onConflict: ['user_id'] });
   document.getElementById("goalDisplay").innerText = "🎯 Dein Ziel: " + goal;
+  document.getElementById("goalInput").value = "";
 }
 
 async function loadGoal() {
@@ -95,9 +125,9 @@ async function loadGoal() {
     .from("goals")
     .select("goal")
     .eq("user_id", currentUser.id)
-    .single();
+    .maybeSingle();
 
-  if (data) {
+  if (data && data.goal) {
     document.getElementById("goalDisplay").innerText = "🎯 Dein Ziel: " + data.goal;
   }
 }
@@ -109,7 +139,7 @@ async function playGame() {
     .select("*")
     .eq("user_id", currentUser.id)
     .eq("date", today)
-    .single();
+    .maybeSingle();
 
   if (data && data.amount >= 5) {
     await supabaseClient
@@ -118,6 +148,7 @@ async function playGame() {
       .eq("user_id", currentUser.id)
       .eq("date", today);
     document.getElementById("gameStatus").innerText = "🎮 Du hast das Spiel gestartet! (Simuliert)";
+    rewardCoins(); // Coins neu laden
   } else {
     document.getElementById("gameStatus").innerText = "😢 Nicht genug Münzen!";
   }
