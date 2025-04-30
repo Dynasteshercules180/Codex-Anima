@@ -18,7 +18,7 @@ export default async function handler(req, res) {
         'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
       },
       body: JSON.stringify({
-        model: 'mistralai/mistral-7b-instruct', // ✅ kostenloses Modell
+        model: 'openchat/openchat-7b', // ✅ kostenloses Modell
         messages: [
           {
             role: 'system',
