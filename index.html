@@ -9,14 +9,12 @@
 </head>
 <body>
   <div class="container">
-    <!-- Logo -->
     <div class="logo-container">
       <img src="codexanima-logo.png" alt="Codex Anima Logo" class="logo" />
     </div>
 
     <h1>Codex Anima – Echoes of your mind</h1>
 
-    <!-- Login/Register -->
     <div class="login-section" id="auth-section">
       <h2>Anmelden</h2>
       <input type="email" id="email" placeholder="Email" />
@@ -25,7 +23,6 @@
       <button onclick="signUp()">Registrieren</button>
     </div>
 
-    <!-- Hauptbereich -->
     <div class="app-section" id="app-section" style="display:none;">
       <div class="logout">
         <button onclick="logout()">🚪 Logout</button>
@@ -37,6 +34,7 @@
       <div class="diary">
         <h3>📔 Tagebucheintrag</h3>
         <textarea id="diaryEntry" placeholder="Schreib hier deinen Tag nieder..."></textarea>
+        <input type="file" id="diaryFile" accept="image/*,application/pdf" />
         <button onclick="saveDiary()">Eintrag speichern</button>
       </div>
 
