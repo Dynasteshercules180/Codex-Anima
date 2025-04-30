@@ -1,6 +1,6 @@
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
-    return res.status(405).send({ error: 'Only POST allowed' });
+    return res.status(405).json({ error: 'Nur POST erlaubt' });
   }
 
   const { message } = req.body;
@@ -17,7 +17,7 @@ export default async function handler(req, res) {
         messages: [
           {
             role: "system",
-            content: "Du bist die innere Stimme des Nutzers. Sprich ruhig, achtsam, poetisch und reflektierend."
+            content: "Du bist die innere Stimme des Nutzers. Antworte achtsam, ruhig und poetisch."
           },
           {
             role: "user",
@@ -27,17 +27,18 @@ export default async function handler(req, res) {
       })
     });
 
-   const data = await response.json();
+    const data = await openaiRes.json(); // ✅ hier war vorher der Fehler
 
-if (!data.choices || !data.choices[0]) {
-  console.error("OpenAI-Rohantwort:", data);
-  return res.status(500).json({ reply: "⚠️ Die Seele schweigt – OpenAI gab keine Antwort zurück." });
-}
+    if (!data.choices || !data.choices[0]) {
+      console.error("OpenAI-Rohantwort:", data);
+      return res.status(500).json({ reply: "⚠️ Die Seele schweigt – keine Antwort von OpenAI." });
+    }
 
-const reply = data.choices[0].message.content;
-res.status(200).json({ reply });
-  } catch (err) {
-    console.error("API-Fehler:", err);
-    res.status(500).json({ error: "OpenAI-Fehler" });
+    const reply = data.choices[0].message.content;
+    return res.status(200).json({ reply });
+
+  } catch (error) {
+    console.error("API-Fehler:", error);
+    return res.status(500).json({ error: "Interner Serverfehler" });
   }
 }
