@@ -9,6 +9,7 @@
 </head>
 <body>
   <div class="container">
+
     <!-- Logo -->
     <div class="logo-container">
       <img src="codexanima-logo.png" alt="Codex Anima Logo" class="logo" />
@@ -28,6 +29,12 @@
 
     <!-- Haupt-App -->
     <div class="app-section" id="app-section" style="display:none;">
+      
+      <!-- Logout -->
+      <div class="logout" style="text-align:right;">
+        <button onclick="logout()">🚪 Logout</button>
+      </div>
+
       <!-- Tägliche Motivation -->
       <p id="motivation" class="motivation-text"></p>
 
@@ -63,6 +70,7 @@
         <button onclick="playGame()">Spiel starten (5 Münzen)</button>
         <p id="gameStatus"></p>
       </div>
+
     </div>
   </div>
 
