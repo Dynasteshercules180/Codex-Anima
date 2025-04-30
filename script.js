@@ -185,9 +185,7 @@ async function loadDiaryEntries() {
 }
 
 function renderCurrentPage() {
-  const dayEntries = diaryEntries.filter(e => new Date(e.created_at).toDateString() === new Date(entry.created_at).toDateString());
-  const allContents = dayEntries.map(e => `<p class="entry-text">${e.content}</p>`).join("<hr>");
-  bookPage.innerHTML = `<strong>${date}</strong><br><br>${allContents}`;
+  const bookPage = document.getElementById("bookPage");
   const indicator = document.getElementById("pageIndicator");
 
   if (diaryEntries.length === 0) {
@@ -201,7 +199,15 @@ function renderCurrentPage() {
     weekday: "short", year: "numeric", month: "short", day: "numeric"
   });
 
-  bookPage.innerHTML = `<strong>${date}</strong><br><br>${entry.content}`;
+  const sameDayEntries = diaryEntries.filter(e =>
+    new Date(e.created_at).toDateString() === new Date(entry.created_at).toDateString()
+  );
+
+  const allContents = sameDayEntries
+    .map(e => `<p class="entry-text">${e.content}</p>`)
+    .join("<hr>");
+
+  bookPage.innerHTML = `<strong>${date}</strong><br><br>${allContents}`;
   indicator.innerText = `${currentPage + 1} / ${diaryEntries.length}`;
 }
 
