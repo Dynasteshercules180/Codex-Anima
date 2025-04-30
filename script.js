@@ -1,6 +1,6 @@
 // Supabase-Initialisierung (ersetze mit deinen Daten!)
-const supabaseUrl = "https://your-project.supabase.co";
-const supabaseKey = "public-anon-key";
+const supabaseUrl = "https://qwcmpnguqsramlhbdcrx.supabase.co";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF3Y21wbmd1cXNyYW1saGJkY3J4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU5ODM4NzAsImV4cCI6MjA2MTU1OTg3MH0.DRKem19okKPpSbeNrx4qW494kLsVtHLtIfdGVya0xhE";
 const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
 const MOTIVATIONAL_QUOTES = [
