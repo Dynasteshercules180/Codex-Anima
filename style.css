@@ -191,3 +191,196 @@ h3 {
     flex-direction: column;
   }
 }
+/* Grundlayout */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(to bottom right, #f0e6f6, #fdf6ec);
+  color: #333;
+  padding: 20px;
+}
+
+.container {
+  max-width: 900px;
+  margin: auto;
+  background: #ffffffdd;
+  border-radius: 15px;
+  padding: 30px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.05);
+}
+
+/* Logo */
+.logo-container {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.logo {
+  width: 200px;
+  max-width: 100%;
+  height: auto;
+  margin-bottom: 0;
+}
+
+/* Titel */
+h1 {
+  text-align: center;
+  font-size: 2em;
+  color: #6c3fa0;
+  margin-bottom: 30px;
+}
+
+/* Eingabe- und Appbereiche */
+input[type="email"],
+input[type="password"],
+input[type="text"],
+input[type="number"],
+textarea,
+input[type="file"] {
+  width: 100%;
+  max-width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-sizing: border-box;
+  font-size: 1rem;
+  background: #fffaf7;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+button {
+  padding: 10px 20px;
+  margin: 10px 0;
+  background-color: #7d5ba6;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.3s ease, transform 0.1s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+button:hover {
+  background-color: #5e3d85;
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+/* Abschnitte */
+.diary, .chat, .goal, .game, .archive {
+  background: #fdf9f6;
+  border-radius: 12px;
+  padding: 20px;
+  margin: 20px 0;
+  box-shadow: 0 0 8px rgba(0,0,0,0.03);
+  border: 1px solid #eee;
+}
+
+h3 {
+  color: #703c94;
+  margin-top: 0;
+}
+
+/* Chat Antwort */
+.chat-response {
+  margin-top: 10px;
+  background: #f0edf8;
+  border-radius: 10px;
+  padding: 15px;
+  font-style: italic;
+}
+
+/* Münzen, Motivation */
+.motivation-text, .coins-text {
+  font-weight: bold;
+  font-size: 1.1em;
+  margin: 10px 0;
+  padding: 10px;
+  background-color: #f3eaf9;
+  border-left: 6px solid #a974d6;
+  border-radius: 8px;
+}
+
+/* Zielanzeige */
+#goalDisplay {
+  background: #eef9ec;
+  border-left: 6px solid #88c67d;
+  padding: 10px 15px;
+  margin-top: 10px;
+  border-radius: 10px;
+  white-space: pre-line;
+}
+
+/* Archiv (Buchblätter) */
+.archive {
+  position: relative;
+  text-align: center;
+}
+
+#bookPage {
+  background: #fff9f2;
+  padding: 20px;
+  border-radius: 10px;
+  min-height: 120px;
+  font-family: "Georgia", serif;
+  font-size: 1.05em;
+  box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
+}
+
+.entry-text {
+  font-style: italic;
+  margin-bottom: 10px;
+}
+
+.archive-controls {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.archive-controls button {
+  flex: 1;
+  margin: 5px 0;
+  background-color: #e8e4ef;
+  color: #444;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  box-shadow: none;
+  border: 1px solid #ccc;
+}
+
+.archive-controls button:hover {
+  background-color: #d6d1e0;
+}
+
+#pageIndicator {
+  font-size: 0.9em;
+  color: #666;
+  margin-top: 10px;
+}
+
+/* Responsive */
+@media screen and (max-width: 600px) {
+  h1 {
+    font-size: 1.5em;
+  }
+
+  button {
+    width: 100%;
+    margin: 10px 0;
+  }
+
+  .archive-controls {
+    flex-direction: column;
+  }
+}
