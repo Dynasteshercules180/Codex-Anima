@@ -4,27 +4,21 @@ body {
   color: #333;
   padding: 20px;
 }
-
 .container {
   max-width: 800px;
   margin: auto;
 }
-
 .logo-container {
   text-align: center;
   margin-bottom: 10px;
 }
-
 .logo {
   max-width: 150px;
-  height: auto;
 }
-
 h1 {
   text-align: center;
   color: #7a4caa;
 }
-
 textarea, input {
   width: 100%;
   padding: 12px;
@@ -32,7 +26,6 @@ textarea, input {
   border-radius: 6px;
   border: 1px solid #ccc;
 }
-
 button {
   padding: 10px 20px;
   background-color: #7a4caa;
@@ -41,23 +34,19 @@ button {
   border-radius: 6px;
   cursor: pointer;
 }
-
 button:hover {
   background-color: #5e3891;
 }
-
 .motivation-text, .coins-text {
   font-style: italic;
   margin: 15px 0;
 }
-
 .chat-response {
   background-color: #f2ecf9;
   padding: 10px;
   border-radius: 5px;
   margin-top: 10px;
 }
-
 .diary, .chat, .goal, .game, .diary-book {
   margin-top: 30px;
   background: #fff;
@@ -65,12 +54,10 @@ button:hover {
   border-radius: 12px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
 }
-
 .logout {
   text-align: right;
   margin-bottom: 10px;
 }
-
 .book-page {
   min-height: 150px;
   padding: 20px;
@@ -78,18 +65,24 @@ button:hover {
   background-color: #fdfcff;
   box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
   font-style: italic;
-  transition: all 0.3s ease;
   overflow-y: auto;
 }
-
 .book-controls {
   margin-top: 15px;
   display: flex;
   justify-content: center;
   gap: 10px;
 }
-
 .book-controls button {
   padding: 8px 16px;
   border-radius: 8px;
+}
+#gameArea button {
+  padding: 10px 20px;
+  font-size: 18px;
+  margin: 10px 5px;
+}
+#gameArea input {
+  padding: 10px;
+  font-size: 18px;
 }
